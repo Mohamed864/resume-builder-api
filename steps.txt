@@ -1,0 +1,185 @@
+Phase 1: Project Planning and Setup
+Step 1: Define Features (Core & AI-related)
+Let’s start by listing the core functionality:
+
+User Registration/Login
+
+Resume Input:
+
+Manual entry (forms)
+
+Upload existing resume (PDF/DOCX)
+
+AI Resume Assistant:
+
+Suggest better phrasing
+
+Auto-generate sections (summary, work experience)
+
+Tailor resume to job descriptions
+
+Resume Template Selector
+
+PDF Resume Export
+
+Dashboard (CRUD for resumes)
+
+Settings & Profile
+
+Tech Stack:
+
+Backend: Laravel 12, Sanctum for auth, Laravel Excel/PDF, OpenAI (or similar) for AI
+
+Frontend: React + Axios + React Router + Form Libraries
+
+Database: MySQL or PostgreSQL
+
+/*******************************************************************************/
+
+ Phase 2: Laravel Backend Setup
+
+ Step 2: Laravel Installation
+
+composer create-project laravel/laravel resume-builder-api
+cd resume-builder-api
+php artisan serve
+
+Step 3: Sanctum Setup for API Auth
+
+composer require laravel/sanctum
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+php artisan migrate
+
+
+php artisan install:api
+
+
+
+// ✅ ADD THIS:
+use Laravel\Sanctum\HasApiTokens;
+
+ API scaffolding installed. Please add the [Laravel\Sanctum\HasApiTokens]
+ trait to your User model.
+
+class User extends Authenticatable
+{
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    // ✅ USE THE TRAIT:
+    use HasApiTokens,HasFactory, Notifiable;
+
+
+php artisan config:publish cors
+
+step 4: make VerifyCsrfToken middleware
+we need also to declare verify_csrf_token as a middleware
+
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+
+class VerifyCsrfToken extends Middleware
+{
+    protected $except = [
+        'api/*',
+    ];
+}
+
+
+step 5:
+go to cors.php and make allowed_origins to hold frontend url
+
+
+step 6:
+$ php artisan make:controller Api/AuthController
+
+php artisan make:request LoginRequest
+php artisan make:request RegisterRequest
+
+step 7:
+in AuthController make login and register and logout functions
+in Api.php make routes
+
+step 8:
+in the requests file login and register
+
+step 9:
+1. Generate the Model, Migration, Controller, Resource
+In your Laravel project root, run this command:
+
+php artisan make:model Resume -mcr
+Explanation:
+
+-m = Create migration
+
+-c = Create controller
+
+-r = Create resource controller (with index, store, update, destroy, show methods)
+
+step 10: Define the Migration Schema
+
+in migrations
+
+database/migrations/xxxx_xx_xx_create_resumes_table.php put the edit
+
+php artisan migrate
+
+step 11: Define Fillable Fields in Model
+
+Open app/Models/Resume.php and update:
+
+step 12: to make the foreign key work we need to
+make policy
+
+php artisan make:policy ResumePolicy --model=Resume
+
+php artisan make:provider AuthServiceProvider
+
+Register the Provider in config/app.php
+In the providers array of config/app.php, make sure this line exists:
+
+App\Providers\AuthServiceProvider::class,
+
+step 13:
+ Add CRUD Logic to Controller
+In app/Http/Controllers/ResumeController.php:
+
+✅ index()
+
+$ php artisan make:request UpdateResumeRequest
+$ php artisan make:request StoreResumeRequest
+
+Store update delete function
+
+ResumeResource added to use it in the json form
+
+add the api of resume
+
+in user.php we add user hasMany resume in resumes
+
+in order to take same token after registering and login
+php artisan make:migration add_api_token_to_users_table --table=users
+edit functions
+
+in the login scripts in postman
+var jsonData = pm.response.json();
+pm.globals.set("access_token", jsonData.data.user.access_token);
+
+and same function for id of resume to update and delete
+and the important thing body and autherization bearer "access_token"
+
+/*****************************************************************/
+
+Phase 3: Frontend Setup
+
+ npm create vite
+
+ enter the name of project && react && language used
+
+ npm install
+
+ npm run dev
