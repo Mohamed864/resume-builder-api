@@ -172,6 +172,31 @@ pm.globals.set("access_token", jsonData.data.user.access_token);
 and same function for id of resume to update and delete
 and the important thing body and autherization bearer "access_token"
 
+step 14:
+
+in .env file for the api calling :
+Goal: Modify resume content (e.g., summary or experience) based on a job description using GPT.
+ OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
+php artisan make:controller Api/AiController
+
+step14 stopped bec api paid
+
+step 15:
+composer require barryvdh/laravel-dompdf
+
+ 2. Create a Blade View for the Resume PDF
+Create a view file:
+resources/views/resume/pdf.blade.php
+
+ 3. Add Method to Controller
+In ResumeController or a separate PdfController, add:
+
+🛣️ 4. Add Route
+In routes/api.php:
+
+
 /*****************************************************************/
 
 Phase 3: Frontend Setup
@@ -183,3 +208,35 @@ Phase 3: Frontend Setup
  npm install
 
  npm run dev
+
+ npm install axios
+
+ npm install react-router-dom
+
+make .env and .env.example and axios.js
+
+🚀 5. React Frontend – Call the API
+In React (using Axios or fetch):
+
+
+1.2. Install Tailwind CSS
+
+npm install -D tailwindcss@npm:@tailwindcss/postcss7-compat postcss@^7 autoprefixer@^9
+npx tailwindcss init -p
+
+in index.css
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+and import it in index.tsx
+
+i create register && AuthContext.jsx
+
+import it in index.tsx
+
+
+
+

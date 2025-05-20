@@ -9,8 +9,7 @@ use App\Models\Resume;
 use App\Http\Requests\StoreResumeRequest;
 use App\Http\Requests\UpdateResumeRequest;
 use App\Http\Resources\ResumeResource;
-
-
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ResumeController extends Controller
 {
@@ -83,5 +82,14 @@ class ResumeController extends Controller
         $resume->delete();
 
         return response('deleted',201);
+    }
+
+    public function download(Resume $resume)
+    {
+        $this->authorize('view',$resume);
+
+        $pdf = Pdf::loadView('resume.pdf',['resume' => $resume]);
+
+        return $pdf->download('resume.pdf');
     }
 }
