@@ -26,18 +26,13 @@ class AuthController extends Controller
 
         ]);
 
-        // Create one token and save it manually
-        $token = $user->createToken('main')->plainTextToken;
-        $pureToken = explode('|', $token)[1] ?? '$token';
-        $user->access_token = $pureToken;
-        $user->save();
+
 
 
         return response()->json([
             'status'=> 'success',
             'data' =>[
                 'user' => $user,
-                'token' => $pureToken,
                 ]
         ]);
 
@@ -59,9 +54,6 @@ class AuthController extends Controller
         // Check if the user already has a token
         if(!$user->access_token){
             $token = $user->createToken('main')->plainTextToken;
-            $pureToken = explode('|', $token)[1] ?? '$token';
-            $user->access_token = $pureToken;
-            $user->save();
         }
 
 
@@ -69,7 +61,7 @@ class AuthController extends Controller
             'status'=> 'success',
             'data' =>[
                 'user' => $user,
-                'token' => $user->access_token,
+                'token' => $token
                 ]
         ]);
     }
@@ -84,8 +76,9 @@ class AuthController extends Controller
     //Logout function
     public function logout(Request $request)
     {
+     /** @var \App\Models\User $user */
         $user = $request->user();
-        $user->currentAccessToke()->delete();
-        return response('logged out',204);
+        $user->currentAccessToken()->delete();
+        return response('', 204);
     }
 }

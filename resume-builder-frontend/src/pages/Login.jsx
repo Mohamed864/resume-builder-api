@@ -26,17 +26,21 @@ const Login = () => {
             setUser(data.data.user);
             setToken(data.data.token);
             navigate("/dashboard");
-        } catch (err) {
-            const response = err.response;
-            console.log(response);
-            if (response && response.status === 422) {
-                if (response.data.errors) {
-                    setErrors(response.data.errors);
-                } else {
-                    setErrors({
-                        email: [response.data.message],
-                    });
-                }
+        } catch (error) {
+            if (error.response?.status === 422) {
+                // Validation errors from Laravel
+                setErrors(error.response.data.errors || {});
+            } else if (error.response?.status === 401) {
+                setErrors({
+                    password: ["Invalid credentials. Please try again."],
+                });
+            } else {
+                console.error("Login error:", error);
+                setErrors({
+                    general: [
+                        "An unexpected error occurred. Please try again.",
+                    ],
+                });
             }
         }
     };

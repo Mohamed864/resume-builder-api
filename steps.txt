@@ -73,6 +73,8 @@ php artisan config:publish cors
 step 4: make VerifyCsrfToken middleware
 we need also to declare verify_csrf_token as a middleware
 
+$ php artisan make:middleware VerifyCsrfToken
+
 <?php
 
 namespace App\Http\Middleware;
@@ -92,6 +94,11 @@ class VerifyCsrfToken extends Middleware
 
 step 5:
 go to cors.php and make allowed_origins to hold frontend url
+
+'allowed_origins' => ['http://localhost:5173'],
+'supports_credentials' => true,
+
+go to sanctum.php in config add localhost:5173
 
 
 step 6:
@@ -197,6 +204,38 @@ In ResumeController or a separate PdfController, add:
 In routes/api.php:
 
 
+//to another project
+php artisan make:seeder PlatformSeeder
+create seeder fro platform
+php artisan db:seed --class=PlatformSeeder
+
+//to due post in new project
+// Create a command
+php artisan make:command PublishScheduledPosts
+
+// In app/Console/Commands/PublishScheduledPosts.php
+public function handle()
+{
+    Post::where('status', 'scheduled')
+        ->where('scheduled_time', '<=', now())
+        ->each(function ($post) {
+            dispatch(new PublishPostJob($post));
+        });
+}
+
+// Create a job
+php artisan make:job PublishPostJob
+
+// In app/Jobs/PublishPostJob.php
+public function handle()
+{
+    // Mock publishing logic
+    $this->post->update(['status' => 'published']);
+
+    // Actual publishing would go here
+}
+
+
 /*****************************************************************/
 
 Phase 3: Frontend Setup
@@ -212,6 +251,8 @@ Phase 3: Frontend Setup
  npm install axios
 
  npm install react-router-dom
+
+ npm install sass
 
 make .env and .env.example and axios.js
 

@@ -7,7 +7,12 @@ const instance = axios.create({
 
 instance.interceptors.request.use((config) => {
     const token = localStorage.getItem("ACCESS_TOKEN");
-    if (!config.url.includes("register") && token) {
+
+    const isPublic = ["/login", "/register"].some((url) =>
+        config.url.includes(url)
+    );
+
+    if (!isPublic && token) {
         config.headers = {
             ...config.headers,
             Authorization: `Bearer ${token}`,
@@ -30,13 +35,14 @@ export default instance;
 instance.interceptors.response.use(
     (response) => {
         const { data } = response;
-        console.log(data.data.user);
-        console.log(data.data.token);
+
         return response;
     },
     (error) => {
-        const { response } = error;
-
-        throw error;
+        if (error.response?.status === 401) {
+            localStorage.removeItem("ACCESS_TOKEN");
+            localStorage.removeItem("USER");
+        }
+        return Promise.reject(error);
     }
 );
