@@ -1,0 +1,62 @@
+.create-resume {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+
+    h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 24px;
+        color: #333;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        input,
+        textarea {
+            padding: 12px 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+
+            &:focus {
+                border-color: #0077ff;
+                outline: none;
+            }
+        }
+
+        button {
+            background: #0077ff;
+            color: #fff;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+
+            &:hover {
+                background: #005fcc;
+            }
+        }
+    }
+
+    @media (max-width: 600px) {
+        padding: 20px;
+        form {
+            gap: 12px;
+            input,
+            textarea {
+                font-size: 15px;
+            }
+        }
+    }
+}

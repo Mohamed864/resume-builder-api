@@ -10,15 +10,18 @@ use App\Http\Requests\StoreResumeRequest;
 use App\Http\Requests\UpdateResumeRequest;
 use App\Http\Resources\ResumeResource;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ResumeController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return auth()->user()->resumes; // Return only the user's resumes
+        return ResumeResource::collection(Resume::where('user_id', Auth::id())->latest()->paginate());
     }
 
     /**
@@ -34,10 +37,10 @@ class ResumeController extends Controller
      */
     public function store(StoreResumeRequest $request)
     {
-        $data = $request->validated();
+        // Merge user_id with data
+        $data = array_merge($request->validated(), ['user_id' => auth()->id()]);
 
-        $data['user_id'] = auth()->id();
-
+        // Create resume
         $resume = Resume::create($data);
 
         return response()->json(new ResumeResource($resume),201);
@@ -48,7 +51,9 @@ class ResumeController extends Controller
      */
     public function show(Resume $resume)
     {
-        //
+        $this->authorize('view',$resume);
+
+        return new ResumeResource($resume);
     }
 
     /**
@@ -64,8 +69,8 @@ class ResumeController extends Controller
      */
     public function update(UpdateResumeRequest $request, Resume $resume)
     {
-
-
+        // Merge user_id with data
+        $this->authorize('update',$resume);
         $data = $request->validated();
         $resume->update($data);
 
@@ -78,7 +83,7 @@ class ResumeController extends Controller
     public function destroy(Resume $resume)
     {
 
-
+        $this->authorize('delete',$resume);
         $resume->delete();
 
         return response('deleted',201);
