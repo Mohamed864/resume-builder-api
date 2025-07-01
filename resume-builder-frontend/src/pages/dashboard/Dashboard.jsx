@@ -45,9 +45,19 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="dashboard">
-            <div className="profile-section">
-                <h2>My Profile</h2>
+        <div>
+            <div className="flex-1 p-6 md:p-12">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+                    <div>
+                        <h2 className="text-3xl font-heading font-bold text-ocean-blue mb-1">
+                            Welcome, {user?.name}!
+                        </h2>
+                        <p className="text-gray-500">
+                            Here are your resumes. Start a new one or manage
+                            existing ones.
+                        </p>
+                    </div>
+                </div>
                 {editMode ? (
                     <div className="edit-profile">
                         <input
@@ -88,24 +98,35 @@ const Dashboard = () => {
                         </button>
                     </div>
                 )}
-            </div>
 
-            <div className="resume-section">
-                <h2>Your Resumes</h2>
-                <div className="resume-list">
-                    {resumes.map((resume) => (
-                        <div className="resume-card" key={resume.id}>
-                            <h3>{resume.title}</h3>
-                            <p>{resume.summary}</p>
-                            <button>Download PDF</button>
+                <div className="grid gap-6 md:grid-cols-3 sm:grid-cols-2">
+                    {resumes.length === 0 ? (
+                        <div className="col-span-full text-center text-gray-400 text-lg">
+                            No resumes yet. Click 'Create Resume' to get
+                            started!
                         </div>
-                    ))}
+                    ) : (
+                        resumes.map((resume) => (
+                            <div
+                                className="bg-white rounded-xl shadow-md p-6 flex flex-col"
+                                key={resume.id}
+                            >
+                                <div className="flex-1">
+                                    <h3 className="text-xl font-semibold text-ocean-blue mb-2">
+                                        {resume.title}
+                                    </h3>
+                                    <p className="text-gray-500 text-sm mb-1">
+                                        {resume.summary}
+                                    </p>
+                                </div>
+                                <button className="flex-1 px-3 py-2 bg-gray-200 text-ocean-blue rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors">
+                                    Download
+                                </button>
+                            </div>
+                        ))
+                    )}
                 </div>
             </div>
-
-            <button className="logout-btn" onClick={handleLogout}>
-                Logout
-            </button>
         </div>
     );
 };
