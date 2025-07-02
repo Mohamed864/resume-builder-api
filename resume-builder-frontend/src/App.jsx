@@ -5,12 +5,14 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Login from "./pages/Login";
 import Resume from "./pages/resume/Resume";
 import Nav from "./components/navigation.component";
+import Home from "./pages/home";
 
 const App = () => {
     return (
         <div>
             <Routes>
                 <Route path="/" element={<Nav />}>
+                    <Route index element={<Home />} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/resume" element={<Resume />} />
                 </Route>

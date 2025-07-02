@@ -81,4 +81,24 @@ class AuthController extends Controller
         $user->currentAccessToken()->delete();
         return response('', 204);
     }
+
+    public function updateUser(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+        ]);
+
+        $user->update($validated);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'user' => $user,
+            ]
+        ]);
+    }
+
 }

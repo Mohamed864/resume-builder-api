@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { Fragment } from "react";
 
 const Nav = () => {
-    const { user, token, setUser, setToken } = useAuth();
+    const { user, setUser, setToken } = useAuth();
     const handleLogout = () => {
         axios.post("/logout").then(() => {
             setUser(null);
@@ -17,6 +17,12 @@ const Nav = () => {
                 <nav className="w-full bg-ocean-blue text-ocean-sand px-6 py-4 shadow flex items-center justify-between">
                     <div className="text-2xl font-bold">ResumeBuilder</div>
                     <div className="flex space-x-6">
+                        <Link
+                            to="/"
+                            className="font-semibold hover:text-ocean-turquoise"
+                        >
+                            Home
+                        </Link>
                         <Link
                             to="/dashboard"
                             className="font-semibold hover:text-ocean-turquoise"
