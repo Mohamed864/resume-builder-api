@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import axios from "../../api/axios"; // Your axios instance
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 import "./resume.styles.scss";
 
 const Resume = () => {
     const navigate = useNavigate();
+    const { id } = useParams();
 
     const [form, setForm] = useState({
         title: "",
@@ -22,6 +25,28 @@ const Resume = () => {
         }));
     };
 
+    useEffect(() => {
+        if (id) {
+            axios
+                .get(`/resumes/${id}`)
+                .then(({ data }) => {
+                    console.log("data", data);
+                    setForm({
+                        title: data.data.title || "",
+                        summary: data.data.summary || "",
+                        skills: (data.data.skills || []).join(", "),
+                        education: JSON.stringify(data.data.education || []),
+                        experience: JSON.stringify(data.data.experience || []),
+                    });
+                })
+                .catch((err) => {
+                    console.error("Error loading resume", err);
+                    alert("Failed to load resume for editing.");
+                    navigate("/dashboard");
+                });
+        }
+    }, [id]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -33,9 +58,15 @@ const Resume = () => {
                 experience: JSON.parse(form.experience),
             };
 
-            await axios.post("/resumes", payload);
-            alert("Resume created!");
-            navigate("/dashboard");
+            if (id) {
+                await axios.put(`/resumes/${id}`, payload);
+                alert("Resume updated!");
+                navigate("/dashboard");
+            } else {
+                await axios.post("/resumes", payload);
+                alert("Resume created!");
+                navigate("/dashboard");
+            }
         } catch (error) {
             console.error("Error creating resume", error);
             alert("Error creating resume");
@@ -44,7 +75,7 @@ const Resume = () => {
 
     return (
         <div className="create-resume">
-            <h2>Create Resume</h2>
+            <h2>{id ? "Edit Resume" : "Create Resume"}</h2>
             <form onSubmit={handleSubmit}>
                 <input
                     name="title"

@@ -9,6 +9,7 @@ const Dashboard = () => {
     const { user, token, setUser, setToken } = useAuth();
     const [resumes, setResumes] = useState([]);
     const [editMode, setEditMode] = useState(false);
+    const [loading, setLoading] = useState(true); //Loading option
     const [profileForm, setProfileForm] = useState({
         name: "",
         email: "",
@@ -28,6 +29,7 @@ const Dashboard = () => {
         axios.get("/resumes").then(({ data }) => {
             console.log(data);
             setResumes(data.data);
+            setLoading(false); //Loading option
         });
     }, []);
 
@@ -58,6 +60,21 @@ const Dashboard = () => {
             console.log(error);
         }
     };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this resume?"))
+            return;
+
+        try {
+            await axios.delete(`/resumes/${id}`);
+            setResumes((prev) => prev.filter((resume) => resume.id !== id));
+        } catch (error) {
+            console.error("Delete failed:", error);
+            alert("Failed to delete the resume. Please try again.");
+        }
+    };
+
+    if (loading) return <div>Loading...</div>;
 
     return (
         <main className="p-6 md:p-12 mx-auto">
@@ -96,7 +113,11 @@ const Dashboard = () => {
                         </div>
                     ) : (
                         <div className="flex flex-col items-center w-full">
-                            <img src={Avatar} alt="Avatar" />
+                            <img
+                                src={Avatar}
+                                alt="Avatar"
+                                className="w-24 h-24 rounded-full mb-4 object-cover"
+                            />
                             <p className="font-bold text-lg text-ocean-blue mb-1">
                                 {user.name}
                             </p>
@@ -104,7 +125,7 @@ const Dashboard = () => {
                             <p className="text-gray-600 mb-4">{user.phone}</p>
                             <button
                                 onClick={() => setEditMode(true)}
-                                className="px-4 py-2 bg-ocean-turquoise text-white rounded-lg font-semibold hover:bg-ocean-blue transition-colors w-full"
+                                className="px-4 py-2 bg-ocean-turquoise text-black rounded-lg font-semibold hover:bg-ocean-blue transition-colors w-full"
                             >
                                 Edit Profile
                             </button>
@@ -115,7 +136,7 @@ const Dashboard = () => {
                 <section className="flex-1">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
                         <div>
-                            <h1 className="text-3xl font-heading font-bold text-ocean-blue mb-1">
+                            <h1 className="text-2xl md:text-3xl font-heading font-bold text-ocean-blue mb-1">
                                 Welcome, {user.name}!
                             </h1>
                             <p className="text-gray-500">
@@ -124,13 +145,13 @@ const Dashboard = () => {
                             </p>
                         </div>
                         <button
-                            navigate={"/resume"}
+                            onClick={() => navigate("/resume")}
                             className="px-6 py-3 bg-ocean-turquoise text-black font-bold rounded-lg shadow hover:bg-ocean-blue transition-colors text-lg w-full md:w-auto"
                         >
                             + Create Resume
                         </button>
                     </div>
-                    <div className="grid gap-6 grid-cols-2">
+                    <div className="grid gap-6 grid-cols-1 xl:grid-cols-2">
                         {resumes.length === 0 ? (
                             <div className="col-span-full text-center text-gray-400 text-lg">
                                 No resumes yet. Click 'Create Resume' to get
@@ -143,25 +164,32 @@ const Dashboard = () => {
                                     key={resume.id}
                                 >
                                     <div className="flex-1">
-                                        <h3 className="text-xl font-semibold text-ocean-blue mb-2">
+                                        <h3 className="text-lg md:text-xl font-semibold text-ocean-blue mb-2">
                                             {resume.title}
                                         </h3>
                                         <p className="text-gray-500 text-sm mb-1">
                                             {resume.summary}
                                         </p>
                                     </div>
-                                    <div className="flex gap-2 mt-auto">
-                                        <button className="flex-1 px-3 py-2 bg-ocean-blue text-black rounded-lg text-sm font-semibold hover:bg-ocean-turquoise transition-colors">
+                                    <div className="flex flex-col sm:flex-row gap-2 mt-auto">
+                                        <button
+                                            onClick={() =>
+                                                navigate(
+                                                    `/resume/${resume.id}/edit`
+                                                )
+                                            }
+                                            className="w-full sm:w-auto flex-1 px-3 py-2 bg-ocean-blue text-black rounded-lg text-sm font-semibold hover:bg-ocean-turquoise transition-colors"
+                                        >
                                             Edit
                                         </button>
-                                        <button className="flex-1 px-3 py-2 bg-gray-200 text-ocean-blue rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors">
+                                        <button className="w-full sm:w-auto flex-1 px-3 py-2 bg-gray-200 text-ocean-blue rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors">
                                             Download
                                         </button>
                                         <button
                                             onClick={() =>
                                                 handleDuplicate(resume.id)
                                             }
-                                            className="flex-1 px-3 py-2 bg-gray-100 text-ocean-blue rounded-lg text-sm font-semibold hover:bg-gray-200 transition-colors"
+                                            className="w-full sm:w-auto flex-1 px-3 py-2 bg-gray-100 text-ocean-blue rounded-lg text-sm font-semibold hover:bg-gray-200 transition-colors"
                                         >
                                             Duplicate
                                         </button>
@@ -169,7 +197,7 @@ const Dashboard = () => {
                                             onClick={() =>
                                                 handleDelete(resume.id)
                                             }
-                                            className="flex-1 px-3 py-2 bg-red-100 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-200 transition-colors"
+                                            className="flex-1 px-3 py-2 bg-red-100 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-200 transition-colors w-full sm:w-auto"
                                         >
                                             Delete
                                         </button>
