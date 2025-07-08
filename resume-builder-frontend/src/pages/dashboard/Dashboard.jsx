@@ -74,6 +74,24 @@ const Dashboard = () => {
         }
     };
 
+    const handleDownload = async (id) => {
+        try {
+            const response = await axios.get(`/resumes/${id}/download`, {
+                responseType: "blob", // important for binary data
+            });
+
+            // Create blob link to download
+            const blob = new Blob([response.data], { type: "application/pdf" });
+            const link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+            link.download = "resume.pdf";
+            link.click();
+        } catch (error) {
+            console.error("Download failed:", error);
+            alert("Failed to download the resume.");
+        }
+    };
+
     if (loading) return <div>Loading...</div>;
 
     return (
@@ -182,7 +200,15 @@ const Dashboard = () => {
                                         >
                                             Edit
                                         </button>
-                                        <button className="w-full sm:w-auto flex-1 px-3 py-2 bg-gray-200 text-ocean-blue rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors">
+                                        <button
+                                            onClick={() =>
+                                                handleDownload(
+                                                    resume.id,
+                                                    resume.title
+                                                )
+                                            }
+                                            className="w-full sm:w-auto flex-1 px-3 py-2 bg-gray-200 text-ocean-blue rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors"
+                                        >
                                             Download
                                         </button>
                                         <button

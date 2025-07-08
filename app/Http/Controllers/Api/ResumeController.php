@@ -92,9 +92,29 @@ class ResumeController extends Controller
     public function download(Resume $resume)
     {
         $this->authorize('view',$resume);
+        try{
+            // Convert fields if they are stored as JSON strings
+            $resume->skills = is_array($resume->skills)
+                ? $resume->skills
+                : json_decode($resume->skills, true);
 
-        $pdf = Pdf::loadView('resume.pdf',['resume' => $resume]);
+            $resume->education = is_array($resume->education)
+                ? $resume->education
+                : json_decode($resume->education, true);
 
-        return $pdf->download('resume.pdf');
+            $resume->experience = is_array($resume->experience)
+                ? $resume->experience
+                : json_decode($resume->experience, true);
+
+            $pdf = Pdf::loadView('resume.pdf',['resume' => $resume]);
+            return $pdf->download('resume.pdf');
+        } catch (\Exception $e){
+            return response()->json([
+                'error' => 'PDF generation failed',
+                'message' => $e->getMessage(),
+            ],500);
+        }
+
+
     }
 }
