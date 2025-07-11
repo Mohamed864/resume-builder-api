@@ -213,14 +213,6 @@ const Dashboard = () => {
                                         </button>
                                         <button
                                             onClick={() =>
-                                                handleDuplicate(resume.id)
-                                            }
-                                            className="w-full sm:w-auto flex-1 px-3 py-2 bg-gray-100 text-ocean-blue rounded-lg text-sm font-semibold hover:bg-gray-200 transition-colors"
-                                        >
-                                            Duplicate
-                                        </button>
-                                        <button
-                                            onClick={() =>
                                                 handleDelete(resume.id)
                                             }
                                             className="flex-1 px-3 py-2 bg-red-100 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-200 transition-colors w-full sm:w-auto"

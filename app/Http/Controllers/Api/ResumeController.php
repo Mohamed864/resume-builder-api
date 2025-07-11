@@ -11,6 +11,7 @@ use App\Http\Requests\UpdateResumeRequest;
 use App\Http\Resources\ResumeResource;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ResumeController extends Controller
@@ -88,33 +89,39 @@ class ResumeController extends Controller
 
         return response('deleted',201);
     }
-
     public function download(Resume $resume)
     {
-        $this->authorize('view',$resume);
-        try{
-            // Convert fields if they are stored as JSON strings
-            $resume->skills = is_array($resume->skills)
-                ? $resume->skills
-                : json_decode($resume->skills, true);
+        $this->authorize('view', $resume);
 
-            $resume->education = is_array($resume->education)
-                ? $resume->education
-                : json_decode($resume->education, true);
+        try {
+            // Safely handle all fields with proper fallbacks
+            $resume->skills = $this->safeJsonDecode($resume->skills);
+            $resume->education = $this->safeJsonDecode($resume->education);
+            $resume->experience = $this->safeJsonDecode($resume->experience);
 
-            $resume->experience = is_array($resume->experience)
-                ? $resume->experience
-                : json_decode($resume->experience, true);
-
-            $pdf = Pdf::loadView('resume.pdf',['resume' => $resume]);
+            $pdf = Pdf::loadView('resume.pdf', ['resume' => $resume]);
             return $pdf->download('resume.pdf');
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
+            Log::error('PDF generation failed: ' . $e->getMessage());
             return response()->json([
                 'error' => 'PDF generation failed',
                 'message' => $e->getMessage(),
-            ],500);
+            ], 500);
+        }
+    }
+
+    private function safeJsonDecode($data)
+    {
+        if (is_array($data)) {
+            return $data;
         }
 
+        if (is_string($data)) {
+            $decoded = json_decode($data, true);
+            return json_last_error() === JSON_ERROR_NONE ? $decoded : [];
+        }
 
+        return [];
     }
+
 }

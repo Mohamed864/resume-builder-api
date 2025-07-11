@@ -98,13 +98,32 @@ const Resume = () => {
                 />
                 <textarea
                     name="education"
-                    placeholder='Education (as JSON) e.g. [{"school":"ABC","degree":"BSc"}]'
+                    placeholder='[
+                                    {
+                                        "degree": "Bachelor of Science", "school": "University of Example",
+                                        "start_date": "2015-09", "end_date": "2019-05",
+                                        "location": "New York, NY", "description": "Major in Computer Science, Minor in Mathematics"
+                                    }
+                                ]'
                     value={form.education}
                     onChange={handleChange}
                 />
                 <textarea
                     name="experience"
-                    placeholder='Experience (as JSON) e.g. [{"company":"XYZ","role":"Dev"}]'
+                    placeholder='[
+                                    {
+                                        "role": "Software Developer",
+                                        "company": "Tech Corp",
+                                        "start_date": "2020-01",
+                                        "end_date": "2023-12",
+                                        "location": "San Francisco, CA",
+                                        "description": "Developed web applications using Laravel and React",
+                                        "achievements": [
+                                            "Led migration to microservices architecture",
+                                            "Improved application performance by 40%"
+                                        ]
+                                    }
+                                ]'
                     value={form.experience}
                     onChange={handleChange}
                 />

@@ -16,7 +16,7 @@
 <body>
 
     <div id="app">
-        <a href="pdf.blade.php">press here</a>
+        <a href="/resume/{{ $resume->id }}/pdf.blade.php">press here</a>
     </div>
 
 
