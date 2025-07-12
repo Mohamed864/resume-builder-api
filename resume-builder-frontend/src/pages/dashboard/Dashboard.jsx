@@ -4,6 +4,7 @@ import axios from "../../api/axios";
 import { useEffect, useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import Avatar from "../../assets/avatar.png";
+import { FaLinkedin, FaGithub, FaGlobe, FaPhone } from "react-icons/fa";
 
 const Dashboard = () => {
     const { user, token, setUser, setToken } = useAuth();
@@ -13,7 +14,10 @@ const Dashboard = () => {
     const [profileForm, setProfileForm] = useState({
         name: "",
         email: "",
-        image: null,
+        linkedin: "",
+        github: "",
+        portfolio: "",
+        phone: "",
     });
     const navigate = useNavigate();
 
@@ -22,12 +26,17 @@ const Dashboard = () => {
 
         axios.get("/user").then(({ data }) => {
             setUser(data);
-            console.log(data);
-            setProfileForm({ name: data.name, email: data.email, image: null });
+            setProfileForm({
+                name: data.name,
+                email: data.email,
+                linkedin: data.linkedin,
+                github: data.github,
+                portfolio: data.portfolio,
+                phone: data.phone,
+            });
         });
 
         axios.get("/resumes").then(({ data }) => {
-            console.log(data);
             setResumes(data.data);
             setLoading(false); //Loading option
         });
@@ -46,6 +55,10 @@ const Dashboard = () => {
         const formData = new FormData();
         formData.append("name", profileForm.name);
         formData.append("email", profileForm.email);
+        formData.append("linkedin", profileForm.linkedin);
+        formData.append("github", profileForm.github);
+        formData.append("portfolio", profileForm.portfolio);
+        formData.append("phone", profileForm.phone);
 
         try {
             const { data } = await axios.put("/user", formData, {
@@ -100,21 +113,86 @@ const Dashboard = () => {
                 <aside className="md:w-1/4 w-full bg-white rounded-xl shadow p-6 flex flex-col items-center mb-8 md:mb-0">
                     {editMode ? (
                         <div className="w-full">
-                            <input
-                                type="text"
-                                name="name"
-                                value={profileForm.name}
-                                onChange={handleInputChange}
-                                className="mb-2 w-full border rounded px-3 py-2"
-                            />
-                            <input
-                                type="email"
-                                name="email"
-                                value={profileForm.email}
-                                onChange={handleInputChange}
-                                className="mb-2 w-full border rounded px-3 py-2"
-                            />
-                            <div className="flex gap-2">
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Name
+                                </label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={profileForm.name}
+                                    onChange={handleInputChange}
+                                    className="w-full border rounded px-3 py-2"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={profileForm.email}
+                                    onChange={handleInputChange}
+                                    className="w-full border rounded px-3 py-2"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <FaLinkedin className="inline mr-2" />
+                                    LinkedIn URL
+                                </label>
+                                <input
+                                    type="url"
+                                    name="linkedin"
+                                    value={profileForm.linkedin}
+                                    onChange={handleInputChange}
+                                    placeholder="https://linkedin.com/in/yourname"
+                                    className="w-full border rounded px-3 py-2"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <FaGithub className="inline mr-2" />
+                                    GitHub URL
+                                </label>
+                                <input
+                                    type="url"
+                                    name="github"
+                                    value={profileForm.github}
+                                    onChange={handleInputChange}
+                                    placeholder="https://github.com/yourname"
+                                    className="w-full border rounded px-3 py-2"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <FaGlobe className="inline mr-2" />
+                                    Portfolio URL
+                                </label>
+                                <input
+                                    type="url"
+                                    name="portfolio"
+                                    value={profileForm.portfolio}
+                                    onChange={handleInputChange}
+                                    placeholder="https://yourportfolio.com"
+                                    className="w-full border rounded px-3 py-2"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <FaPhone className="inline mr-2" />
+                                    Phone
+                                </label>
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    value={profileForm.phone}
+                                    onChange={handleInputChange}
+                                    className="w-full border rounded px-3 py-2"
+                                />
+                            </div>
+                            <div className="flex gap-2 mt-4">
                                 <button
                                     onClick={handleSave}
                                     className="flex-1 px-3 py-2 bg-ocean-turquoise text-white rounded-lg text-sm font-semibold hover:bg-ocean-blue transition-colors"
@@ -140,7 +218,65 @@ const Dashboard = () => {
                                 {user.name}
                             </p>
                             <p className="text-gray-600 mb-1">{user.email}</p>
-                            <p className="text-gray-600 mb-4">{user.phone}</p>
+                            <div className="w-full mt-4 space-y-2">
+                                {user.linkedin && (
+                                    <div className="flex items-center">
+                                        <FaLinkedin className="text-blue-600 mr-2" />
+                                        <a
+                                            href={user.linkedin}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-600 hover:underline truncate"
+                                        >
+                                            {user.linkedin.replace(
+                                                /^https?:\/\//,
+                                                ""
+                                            )}
+                                        </a>
+                                    </div>
+                                )}
+
+                                {user.github && (
+                                    <div className="flex items-center">
+                                        <FaGithub className="text-gray-800 mr-2" />
+                                        <a
+                                            href={user.github}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-gray-800 hover:underline truncate"
+                                        >
+                                            {user.github.replace(
+                                                /^https?:\/\//,
+                                                ""
+                                            )}
+                                        </a>
+                                    </div>
+                                )}
+
+                                {user.portfolio && (
+                                    <div className="flex items-center">
+                                        <FaGlobe className="text-green-600 mr-2" />
+                                        <a
+                                            href={user.portfolio}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-green-600 hover:underline truncate"
+                                        >
+                                            {user.portfolio.replace(
+                                                /^https?:\/\//,
+                                                ""
+                                            )}
+                                        </a>
+                                    </div>
+                                )}
+
+                                {user.phone && (
+                                    <div className="flex items-center">
+                                        <FaPhone className="text-gray-600 mr-2" />
+                                        <span>{user.phone}</span>
+                                    </div>
+                                )}
+                            </div>
                             <button
                                 onClick={() => setEditMode(true)}
                                 className="px-4 py-2 bg-ocean-turquoise text-black rounded-lg font-semibold hover:bg-ocean-blue transition-colors w-full"

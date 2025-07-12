@@ -29,7 +29,11 @@ class RegisterRequest extends FormRequest
                 'required',
                 'confirmed',
                 Password::min(8)->letters()->symbols()
-            ]
+            ],
+            'linkedin' => 'nullable|string|max:255',
+            'github' => 'nullable|string|max:255',
+            'portfolio' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:255'
         ];
     }
 }

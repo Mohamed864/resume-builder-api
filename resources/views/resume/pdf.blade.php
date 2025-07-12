@@ -6,36 +6,61 @@
     <style>
         body {
             font-family: DejaVu Sans, sans-serif;
-            line-height: 1.6;
+            line-height: 1.5;
             color: #333;
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px;
         }
 
-        h1 {
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .name {
+            font-size: 28px;
+            font-weight: bold;
             color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-
-        h2 {
-            color: #2980b9;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-            margin-top: 10px;
-        }
-
-        h3 {
-            color: #16a085;
             margin-bottom: 5px;
         }
 
-        .section {
-            margin-bottom: 10px;
+        .title {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
         }
 
-        .item {
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .contact-links a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .contact-links span {
+            color: #95a5a6;
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-top: 25px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .education-item,
+        .experience-item {
             margin-bottom: 15px;
         }
 
@@ -49,44 +74,35 @@
             display: flex;
             justify-content: space-between;
             font-style: italic;
+            color: #7f8c8d;
             margin-bottom: 5px;
         }
 
-        .skills-list {
+        .skills-container {
             display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            padding: 0;
-            margin: 0;
-            list-style: none;
+
+            gap: 3px;
         }
 
         .skill-item {
-            background: #f0f0f0;
-            padding: 3px 8px;
+            background: #ecf0f1;
+            padding: 5px 10px;
             border-radius: 3px;
+            font-size: 14px;
         }
 
-        /* Alternative: Skills with commas (no boxes) */
-        /*
-        .skills-list {
-            padding: 0;
-            margin: 0;
-            list-style: none;
+        ul {
+            padding-left: 20px;
         }
-        .skill-item:after {
-            content: ", ";
+
+        li {
+            margin-bottom: 5px;
         }
-        .skill-item:last-child:after {
-            content: "";
-        }
-        */
     </style>
 </head>
 
 <body>
     @php
-        // Safely decode JSON data or use empty arrays
         $skills = is_array($resume->skills) ? $resume->skills : [];
         $education = is_array($resume->education) ? $resume->education : json_decode($resume->education, true) ?? [];
         $experience = is_array($resume->experience)
@@ -94,24 +110,30 @@
             : json_decode($resume->experience, true) ?? [];
     @endphp
 
-    <header>
-        <h1>{{ $resume->title ?? 'Professional Resume' }}</h1>
-        @if (!empty($resume->summary))
-            <div class="section">
-                <h2>Professional Summary</h2>
-                <p>{{ $resume->summary }}</p>
-            </div>
-        @endif
-    </header>
+    <div class="header">
+        <div class="name">{{ $user->name ?? 'Your Name' }}</div>
+        <div class="title">{{ $resume->title ?? 'Professional Title' }}</div>
 
-    @if (!empty($skills))
+        <div class="contact-links">
+            @if (!empty($user->linkedin))
+                <a href="{{ $user->linkedin }}">LinkedIn</a> <span>|</span>
+            @endif
+            @if (!empty($user->github))
+                <a href="{{ $user->github }}">GitHub</a> <span>|</span>
+            @endif
+            @if (!empty($user->portfolio))
+                <a href="{{ $user->portfolio }}">Portfolio</a> <span>|</span>
+            @endif
+            @if (!empty($user->phone))
+                <span>{{ $user->phone }}</span>
+            @endif
+        </div>
+    </div>
+
+    @if (!empty($resume->summary))
         <div class="section">
-            <h2>Skills</h2>
-            <ul class="skills-list">
-                @foreach ($skills as $skill)
-                    <li class="skill-item">{{ $skill }}</li>
-                @endforeach
-            </ul>
+            <h2>Summary</h2>
+            <p>{{ $resume->summary }}</p>
         </div>
     @endif
 
@@ -119,7 +141,7 @@
         <div class="section">
             <h2>Education</h2>
             @foreach ($education as $item)
-                <div class="item">
+                <div class="education-item">
                     <div class="item-header">
                         <span>{{ $item['degree'] ?? 'Degree not specified' }}</span>
                         @if (isset($item['start_date']) || isset($item['end_date']))
@@ -144,11 +166,22 @@
         </div>
     @endif
 
+    @if (!empty($skills))
+        <div class="section">
+            <h2>Skills</h2>
+            <div class="skills-container">
+                @foreach ($skills as $skill)
+                    <div class="skill-item">{{ $skill }}</div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     @if (!empty($experience))
         <div class="section">
-            <h2>Work Experience</h2>
+            <h2>Experience</h2>
             @foreach ($experience as $exp)
-                <div class="item">
+                <div class="experience-item">
                     <div class="item-header">
                         <span>{{ $exp['role'] ?? 'Position not specified' }}</span>
                         @if (isset($exp['start_date']) || isset($exp['end_date']))
@@ -177,13 +210,6 @@
                     @endif
                 </div>
             @endforeach
-        </div>
-    @endif
-
-    @if (!empty($resume->additional_info))
-        <div class="section">
-            <h2>Additional Information</h2>
-            <p>{{ $resume->additional_info }}</p>
         </div>
     @endif
 </body>

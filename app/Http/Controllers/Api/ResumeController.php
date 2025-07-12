@@ -99,7 +99,13 @@ class ResumeController extends Controller
             $resume->education = $this->safeJsonDecode($resume->education);
             $resume->experience = $this->safeJsonDecode($resume->experience);
 
-            $pdf = Pdf::loadView('resume.pdf', ['resume' => $resume]);
+            // Get the authenticated user
+            $user = Auth::user();
+
+            $pdf = Pdf::loadView('resume.pdf', [
+                'resume' => $resume,
+                'user' => $user,
+            ]);
             return $pdf->download('resume.pdf');
         } catch (\Exception $e) {
             Log::error('PDF generation failed: ' . $e->getMessage());

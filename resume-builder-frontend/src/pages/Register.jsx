@@ -7,6 +7,10 @@ const Register = () => {
     const [form, setForm] = useState({
         name: "",
         email: "",
+        linkedin: "",
+        github: "",
+        portfolio: "",
+        phone: "",
         password: "",
         password_confirmation: "",
     });
@@ -84,6 +88,74 @@ const Register = () => {
                             name="email"
                             value={form.email}
                             placeholder="Email"
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label
+                            htmlFor="linkedin"
+                            className="block text-ocean-blue font-semibold mb-1"
+                        >
+                            Linkedln
+                        </label>
+                        <input
+                            type="text"
+                            className="w-full px-4 py-2 rounded-lg border border-ocean-blue focus:outline-none focus:border-ocean-turquoise"
+                            name="linkedin"
+                            value={form.linkedin}
+                            placeholder="Linkedln"
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label
+                            htmlFor="github"
+                            className="block text-ocean-blue font-semibold mb-1"
+                        >
+                            GitHub
+                        </label>
+                        <input
+                            type="text"
+                            className="w-full px-4 py-2 rounded-lg border border-ocean-blue focus:outline-none focus:border-ocean-turquoise"
+                            name="github"
+                            value={form.github}
+                            placeholder="GitHub"
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label
+                            htmlFor="portfolio"
+                            className="block text-ocean-blue font-semibold mb-1"
+                        >
+                            Portfolio
+                        </label>
+                        <input
+                            type="text"
+                            className="w-full px-4 py-2 rounded-lg border border-ocean-blue focus:outline-none focus:border-ocean-turquoise"
+                            name="portfolio"
+                            value={form.portfolio}
+                            placeholder="Portfolio"
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label
+                            htmlFor="phone"
+                            className="block text-ocean-blue font-semibold mb-1"
+                        >
+                            Phone
+                        </label>
+                        <input
+                            type="phone"
+                            className="w-full px-4 py-2 rounded-lg border border-ocean-blue focus:outline-none focus:border-ocean-turquoise"
+                            name="phone"
+                            value={form.phone}
+                            placeholder="Phone"
                             onChange={handleChange}
                             required
                         />
