@@ -1,4 +1,3 @@
-import "./Dashboard.styles.scss";
 import { useAuth } from "../../context/AuthContext";
 import axios from "../../api/axios";
 import { useEffect, useState } from "react";
